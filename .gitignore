@@ -1,0 +1,17 @@
+# Сборка ESP-IDF
+firmware/build/
+firmware/managed_components/
+firmware/sdkconfig
+firmware/sdkconfig.old
+
+# Программы и результаты на ПК
+host/out/
+host/samples/
+host/*.exe
+host/*.pdb
+host/.cc
+__pycache__/
+*.pyc
+
+# Временное
+docs/_view.html

@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 860" width="1200" height="860">
+<rect width="1200" height="860" rx="22" fill="#0e0f17"/>
+<rect x="120" y="96" width="300" height="560" rx="16" fill="#16261f" stroke="#2c4a3b" stroke-width="3"/>
+<text x="270.0" y="134" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="22" fill="#e8eaf2" text-anchor="middle" font-weight="700">ESP32-CAM</text>
+<rect x="224.0" y="154" width="92" height="92" rx="10" fill="#0b0c12" stroke="#3a3f55" stroke-width="2"/>
+<circle cx="270.0" cy="200" r="30" fill="#14161f" stroke="#4a5070" stroke-width="3"/>
+<circle cx="270.0" cy="200" r="13" fill="#2b3a6a"/>
+<text x="270.0" y="268" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#8a8fa6" text-anchor="middle" font-weight="400">OV2640</text>
+<rect x="220.0" y="286" width="100" height="22" rx="4" fill="#8a8f9e" opacity="0.55"/>
+<text x="270.0" y="326" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13" fill="#8a8fa6" text-anchor="middle" font-weight="400">microSD</text>
+<circle cx="150" cy="326" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="168" y="331" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="start" font-weight="400">5V</text>
+<circle cx="150" cy="366" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="168" y="371" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="start" font-weight="400">GND</text>
+<circle cx="150" cy="406" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="168" y="411" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="start" font-weight="400">IO12</text>
+<circle cx="150" cy="446" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="168" y="451" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="start" font-weight="400">IO13</text>
+<circle cx="150" cy="486" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="168" y="491" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="start" font-weight="400">IO15</text>
+<circle cx="150" cy="526" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="168" y="531" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="start" font-weight="400">IO14</text>
+<circle cx="150" cy="566" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="168" y="571" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="start" font-weight="400">IO2</text>
+<circle cx="150" cy="606" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="168" y="611" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="start" font-weight="400">IO4</text>
+<circle cx="390" cy="326" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="372" y="331" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="end" font-weight="400">3V3</text>
+<circle cx="390" cy="366" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="372" y="371" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="end" font-weight="400">IO16</text>
+<circle cx="390" cy="406" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="372" y="411" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="end" font-weight="400">IO0</text>
+<circle cx="390" cy="446" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="372" y="451" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="end" font-weight="400">GND</text>
+<circle cx="390" cy="486" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="372" y="491" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="end" font-weight="400">VCC</text>
+<circle cx="390" cy="526" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="372" y="531" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="end" font-weight="400">U0R</text>
+<circle cx="390" cy="566" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="372" y="571" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="end" font-weight="400">U0T</text>
+<circle cx="390" cy="446" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="372" y="451" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="end" font-weight="400">GND</text>
+<rect x="140" y="670" width="260" height="48" rx="10" fill="none" stroke="#3a3f55" stroke-width="2" stroke-dasharray="6 6"/>
+<text x="270.0" y="700" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#8a8fa6" text-anchor="middle" font-weight="400">ESP32-CAM-MB · micro-USB</text>
+<rect x="760" y="70" width="330" height="280" rx="14" fill="#141724" stroke="#3a3f5a" stroke-width="3"/>
+<rect x="805" y="100" width="240" height="170" rx="6" fill="#020203"/>
+<text x="925.0" y="180" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="24" fill="#cfe3ff" text-anchor="middle" font-weight="700">DITHR//CAM</text>
+<text x="925.0" y="210" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13" fill="#8a8fa6" text-anchor="middle" font-weight="400">SH1107 · 128x128 · I2C</text>
+<circle cx="820" cy="350" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="820" y="332" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="middle" font-weight="400">SDA</text>
+<circle cx="890" cy="350" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="890" y="332" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="middle" font-weight="400">SCL</text>
+<circle cx="960" cy="350" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="960" y="332" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="middle" font-weight="400">GND</text>
+<circle cx="1030" cy="350" r="9" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<text x="1030" y="332" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="15" fill="#e8eaf2" text-anchor="middle" font-weight="400">VCC</text>
+<rect x="514" y="430" width="92" height="80" rx="10" fill="#1d1f2a" stroke="#454a63" stroke-width="2"/><circle cx="560" cy="470" r="22" fill="#e2496e"/><text x="560" y="418" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#8a8fa6" text-anchor="middle" font-weight="400">спуск</text><circle cx="534" cy="510" r="8" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/><circle cx="586" cy="510" r="8" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<rect x="674" y="430" width="92" height="80" rx="10" fill="#1d1f2a" stroke="#454a63" stroke-width="2" stroke-dasharray="6 5"/><circle cx="720" cy="470" r="22" fill="#5b4a80"/><text x="720" y="418" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#8a8fa6" text-anchor="middle" font-weight="400">кнопка 2</text><circle cx="694" cy="510" r="8" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/><circle cx="746" cy="510" r="8" fill="#d9b25a" stroke="#6b5321" stroke-width="2"/>
+<path d="M150,366 L112,366 Q90,366 90,388 L90,738 Q90,760 112,760 L938,760 Q960,760 960,738 L960,350" fill="none" stroke="#05060a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M150,366 L112,366 Q90,366 90,388 L90,738 Q90,760 112,760 L938,760 Q960,760 960,738 L960,350" fill="none" stroke="#c3c7d6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M534,510 L534,760" fill="none" stroke="#05060a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M534,510 L534,760" fill="none" stroke="#c3c7d6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="534" cy="760" r="8" fill="#c3c7d6"/>
+<path d="M746,510 L746,738 Q746,760 768,760 L960,760" fill="none" stroke="#05060a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M746,510 L746,738 Q746,760 768,760 L960,760" fill="none" stroke="#c3c7d6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="10 9"/>
+<path d="M150,406 L90,406 Q68,406 68,428 L68,768 Q68,790 90,790 L564,790 Q586,790 586,768 L586,510" fill="none" stroke="#05060a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M150,406 L90,406 Q68,406 68,428 L68,768 Q68,790 90,790 L564,790 Q586,790 586,768 L586,510" fill="none" stroke="#3ee08a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M150,446 L68,446 Q46,446 46,468 L46,798 Q46,820 68,820 L798,820 Q820,820 820,798 L820,350" fill="none" stroke="#05060a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M150,446 L68,446 Q46,446 46,468 L46,798 Q46,820 68,820 L798,820 Q820,820 820,798 L820,350" fill="none" stroke="#4ea8ff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M390,326 L678,326 Q700,326 700,348 L700,373 Q700,395 722,395 L1008,395 Q1030,395 1030,373 L1030,350" fill="none" stroke="#05060a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M390,326 L678,326 Q700,326 700,348 L700,373 Q700,395 722,395 L1008,395 Q1030,395 1030,373 L1030,350" fill="none" stroke="#ff5a5f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M390,566 L618,566 Q640,566 640,544 L640,442 Q640,420 662,420 L868,420 Q890,420 890,398 L890,350" fill="none" stroke="#05060a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M390,566 L618,566 Q640,566 640,544 L640,442 Q640,420 662,420 L868,420 Q890,420 890,398 L890,350" fill="none" stroke="#ffd23f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M390,526 L478,526 Q500,526 500,548 L500,578 Q500,600 522,600 L672,600 Q694,600 694,578 L694,510" fill="none" stroke="#05060a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M390,526 L478,526 Q500,526 500,548 L500,578 Q500,600 522,600 L672,600 Q694,600 694,578 L694,510" fill="none" stroke="#b48cff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="10 9"/>
+<rect x="880" y="461" width="26" height="8" rx="4" fill="#ff5a5f"/>
+<text x="916" y="470" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#e8eaf2" text-anchor="start" font-weight="400">VCC → 3V3</text>
+<rect x="880" y="489" width="26" height="8" rx="4" fill="#c3c7d6"/>
+<text x="916" y="498" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#e8eaf2" text-anchor="start" font-weight="400">GND → GND (у 5V)</text>
+<rect x="880" y="517" width="26" height="8" rx="4" fill="#4ea8ff"/>
+<text x="916" y="526" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#e8eaf2" text-anchor="start" font-weight="400">SDA → IO13</text>
+<rect x="880" y="545" width="26" height="8" rx="4" fill="#ffd23f"/>
+<text x="916" y="554" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#e8eaf2" text-anchor="start" font-weight="400">SCL → U0T (GPIO1)</text>
+<rect x="880" y="573" width="26" height="8" rx="4" fill="#3ee08a"/>
+<text x="916" y="582" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#e8eaf2" text-anchor="start" font-weight="400">кнопка → IO12 и GND</text>
+<rect x="880" y="601" width="26" height="8" rx="4" fill="#b48cff"/>
+<text x="916" y="610" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#e8eaf2" text-anchor="start" font-weight="400">кнопка 2 → U0R (без MB)</text>
+<text x="600" y="846" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#8a8fa6" text-anchor="middle" font-weight="400">microSD в слоте на ESP32-CAM · питание от повербанка в micro-USB платы MB</text>
+</svg>

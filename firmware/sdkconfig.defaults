@@ -1,0 +1,46 @@
+# ESP32-CAM (AI-Thinker и клоны): ESP32 240 МГц, 4 МБ flash, 4 МБ PSRAM, OV2640
+CONFIG_IDF_TARGET="esp32"
+
+# Скорость: максимальная частота и оптимизация -O2 вместо отладочной -Og
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+
+# Flash 80 МГц (нужна для PSRAM 80 МГц). Режим DIO работает на любых клонах;
+# QIO чуть быстрее, но не каждый модуль с ним загружается.
+CONFIG_ESPTOOLPY_FLASHMODE_DIO=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+CONFIG_PARTITION_TABLE_SINGLE_APP_LARGE=y
+
+# PSRAM: кадры камеры и рабочие буферы эффектов живут здесь
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_SPEED_80M=y
+CONFIG_SPIRAM_USE_MALLOC=y
+CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL=16384
+# Камере и SD нужна внутренняя память с DMA, её держим про запас
+CONFIG_SPIRAM_MALLOC_RESERVE_INTERNAL=65536
+
+# Камера: служебная задача драйвера на ядре 0, наш конвейер на ядре 1.
+# SCCB быстрее, чтобы смена разрешения занимала меньше времени.
+CONFIG_CAMERA_CORE0=y
+CONFIG_SCCB_CLK_FREQ=400000
+
+# Bluetooth не нужен
+CONFIG_BT_ENABLED=n
+
+CONFIG_FREERTOS_HZ=1000
+# Обработка снимка идёт несколько секунд, сторож не должен паниковать
+CONFIG_ESP_TASK_WDT_TIMEOUT_S=20
+
+# FAT: длинные имена, крупный буфер файлов
+CONFIG_FATFS_LFN_HEAP=y
+CONFIG_FATFS_MAX_LFN=64
+CONFIG_FATFS_VFS_FSTAT_BLKSIZE=4096
+
+# Лог по UART идёт до запуска экрана: потом GPIO1 становится линией SCL.
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
+CONFIG_BOOTLOADER_LOG_LEVEL_WARN=y
+CONFIG_ESP_BROWNOUT_DET=y
+
+# Крупные статические буферы (EXT_RAM_BSS_ATTR) можно класть в PSRAM
+CONFIG_SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY=y
