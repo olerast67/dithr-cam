@@ -24,7 +24,7 @@ static void worker(void *arg) {
 void par_init(void) {
     s_done = xSemaphoreCreateBinary();
     // Приоритет выше вывода на экран: пока идёт обработка, экран подождёт.
-    xTaskCreatePinnedToCore(worker, "par", 4096, NULL, 6, &s_worker, 0);
+    xTaskCreatePinnedToCore(worker, "par", 6144, NULL, 6, &s_worker, 0);
 }
 
 void par_run(fx_rows_fn fn, void *ctx, int h) {

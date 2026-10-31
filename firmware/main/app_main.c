@@ -110,6 +110,7 @@ static void capture(void) {
     if (tide) fx_tide_map(variant, seed, s_scratch, s_img.w, s_img.h);  // карта времени до съёмки
     dcam_mode_capture(!tide);
     bool ok = true;
+    bool saved = true;  // все файлы снимка записались на карту
     for (int k = 0; k < inf->frames && ok; k++) {
         camera_fb_t *fb = dcam_get(cw, chh, 8);
         if (!fb) {
@@ -118,16 +119,18 @@ static void capture(void) {
         }
         if (k == 0) {
             ui_progress(s_cap_style, 2, "SAVE RAW");
-            store_save(shot, "raw", "jpg", fb->buf, fb->len);
+            saved &= store_save(shot, "raw", "jpg", fb->buf, fb->len) == ESP_OK;
         }
         if (inf->out != FX_OUT_NONE) {
             esp_err_t e;
             if (tide) {
-                // TIDE: кадр k ложится только в пиксели своего момента
+                // TIDE: кадр k ложится только в пиксели своего момента. Первый
+                // кадр ложится целиком: если какой-то кадр серии не декодируется,
+                // на его месте останется первый, а не прошлый снимок.
                 char st[16];
                 snprintf(st, sizeof(st), "TIME %d/%d", k + 1, inf->frames);
                 ui_progress(s_cap_style, 2 + k * 60 / inf->frames, st);
-                e = dec_rgb_tmap(fb->buf, fb->len, &s_img, s_scratch, k);
+                e = k == 0 ? dec_rgb(fb->buf, fb->len, &s_img, 7) : dec_rgb_tmap(fb->buf, fb->len, &s_img, s_scratch, k);
             } else if (k == 0) {
                 ui_progress(s_cap_style, 4, "DECODE");
                 e = dec_rgb(fb->buf, fb->len, &s_img, 7);
@@ -140,7 +143,7 @@ static void capture(void) {
                 fx_job_t tmp = {.img = s_img, .scratch = s_scratch};
                 e = dec_plane(fb->buf, fb->len, &s_img, k == 1 ? FX_GHOST_G(&tmp) : FX_GHOST_B(&tmp), k);
             }
-            if (e != ESP_OK && !tide) ok = false;  // в серии TIDE битый кадр просто пропускаем
+            if (e != ESP_OK && (!tide || k == 0)) ok = false;  // в серии TIDE битый кадр (кроме первого) пропускаем
         }
         esp_camera_fb_return(fb);
         if (!tide && k + 1 < inf->frames) vTaskDelay(pdMS_TO_TICKS(GHOST_GAP_MS));
@@ -171,30 +174,42 @@ static void capture(void) {
         };
         fx_render(s_cap_style, &job);
         const int64_t t2 = esp_timer_get_time();
-        if (job.idx) {
+        if (job.failed) {
+            saved = false;  // исходник уже на карте, а полуготовый кадр не пишем
+        } else if (job.idx) {
             ui_progress(s_cap_style, 100, "WRITE PNG");
-            store_save_png(shot, tag, job.idx, job.out_w, job.out_h, job.bpp, (const uint8_t(*)[3])job.pal,
-                           job.pal_n);
+            saved &= store_save_png(shot, tag, job.idx, job.out_w, job.out_h, job.bpp, (const uint8_t(*)[3])job.pal,
+                                    job.pal_n) == ESP_OK;
             result_mask(job.idx, (const uint8_t(*)[3])job.pal, job.out_w, job.out_h);
         } else {
             ui_progress(s_cap_style, 100, "ENCODE JPEG");
             size_t len = 0;
             // scratch после эффекта свободен: туда кладём готовый JPEG
             if (enc_jpeg(&s_img, 92, s_scratch, s_scratch_size, &len) == ESP_OK)
-                store_save(shot, tag, "jpg", s_scratch, len);
+                saved &= store_save(shot, tag, "jpg", s_scratch, len) == ESP_OK;
+            else
+                saved = false;
             result_mask(NULL, NULL, s_img.w, s_img.h);
         }
+        if (job.failed) result_mask(NULL, NULL, s_img.w, s_img.h);
         ESP_LOGI(TAG, "shot %u %s: grab %lld ms, fx %lld ms, total %lld ms", (unsigned)shot, tag, (t1 - t0) / 1000,
                  (t2 - t1) / 1000, (esp_timer_get_time() - t0) / 1000);
     }
     // Для RAW в s_m остаётся последний кадр превью, его и показываем.
     store_commit_shot(shot);
-    ui_result(s_m, shot, inf->out == FX_OUT_NONE ? "RAW" : tag, (int)((esp_timer_get_time() - t0) / 1000));
+    if (saved) {
+        ui_result(s_m, shot, inf->out == FX_OUT_NONE ? "RAW" : tag, (int)((esp_timer_get_time() - t0) / 1000));
+    } else {
+        // карта выпала или переполнилась, файл не закодировался или эффекту не
+        // хватило памяти: показываем это вместо «SAVED»
+        ui_message("SAVE ERROR", "CHECK SD CARD");
+    }
     vTaskDelay(pdMS_TO_TICKS(1600));
 }
 
 // ---------------------------------------------------------------- цикл
 static uint8_t s_m_old[FX_PN];  // последний кадр прежнего стиля
+static int64_t s_style_dirty;   // когда стиль сменился и ещё не записан в NVS
 static int s_wipe;              // кадров перехода осталось
 
 static void change_style(int d) {
@@ -202,7 +217,7 @@ static void change_style(int d) {
     s_wipe = 9;
     s_style = (fx_style_t)(((int)s_style + d + FX_COUNT) % FX_COUNT);
     s_banner = 14;
-    store_set_style((int)s_style);
+    s_style_dirty = esp_timer_get_time();  // в NVS запишется, когда листание закончится
 }
 
 static void change_variant(void) {
@@ -231,16 +246,45 @@ static void wipe(uint8_t *m) {
     s_wipe--;
 }
 
+// Окно выбора варианта: после смены стиля удержанием касания в течение
+// VAR_WINDOW_US перебирают варианты, потом касание снова делает снимок.
+// Так одной кнопки хватает на всё, а в обычной съёмке затвор срабатывает сразу.
+#define VAR_WINDOW_US 1800000
+static int64_t s_var_until;
+
 static void camera_loop(void *arg) {
     ui_hud_t hud = {0};
     fx_style_t mix_show = FX_NEON;
     for (;;) {
+        const int64_t now = esp_timer_get_time();
+        const bool window = now < s_var_until && fx_info(s_style)->nvar > 1;
         switch (input_get()) {
-            case EV_SHOOT: capture(); break;
-            case EV_NEXT: change_style(+1); break;
-            case EV_PREV: change_style(-1); break;
+            case EV_SHOOT:
+                if (window) {
+                    change_variant();
+                    s_var_until = now + VAR_WINDOW_US;
+                } else {
+                    capture();
+                    input_flush();  // касания во время обработки не должны стать новыми снимками
+                    s_var_until = 0;
+                }
+                break;
+            case EV_NEXT:
+                change_style(+1);
+                s_var_until = now + VAR_WINDOW_US;
+                break;
+            case EV_PREV:
+                change_style(-1);
+                s_var_until = now + VAR_WINDOW_US;
+                break;
             case EV_VARIANT: change_variant(); break;
             default: break;
+        }
+        // Стиль пишется во flash через 3 с после последней смены: при листании
+        // удержанием это одна запись вместо записи на каждый шаг.
+        if (s_style_dirty && now - s_style_dirty > 3000000) {
+            store_set_style((int)s_style);
+            s_style_dirty = 0;
         }
         camera_fb_t *fb = dcam_get(PREV_W, PREV_H, 4);
         if (!fb) continue;
@@ -259,7 +303,12 @@ static void camera_loop(void *arg) {
         hud.sd_ok = store_ok();
         hud.fps = oled_fps();
         hud.banner_left = s_banner > 0 ? s_banner-- : 0;
+        hud.var_window = window ? (int)((s_var_until - now) * 100 / VAR_WINDOW_US) : 0;
         ui_live(s_m, &hud);
+        // Если превью считается дольше кадра камеры, fb_get возвращается сразу и
+        // цикл не уступал бы ядро: задача простоя не получала бы времени, и сторож
+        // срабатывал бы каждые 20 с.
+        vTaskDelay(1);
     }
 }
 
@@ -307,5 +356,6 @@ void app_main(void) {
         ui_message("NO SD", "PREVIEW ONLY");
         vTaskDelay(pdMS_TO_TICKS(1200));
     }
-    xTaskCreatePinnedToCore(camera_loop, "cam_loop", 8192, NULL, 5, NULL, 1);
+    // Стек с запасом: в глубине снимка работают JPEGDEC и кодировщик JPEG.
+    xTaskCreatePinnedToCore(camera_loop, "cam_loop", 12288, NULL, 5, NULL, 1);
 }

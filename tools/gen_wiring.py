@@ -126,14 +126,15 @@ def main():
     x, y = pin("R", "U0R")
     o.append(wire(rpath([(x, y), (500, y), (500, 600), (B2[0] - 26, 600), (B2[0] - 26, B2[1] + 40)]), VIO, dash=True))
 
-    # ---- легенда
-    lx, ly = 880, 470
-    items = [(RED, "VCC → 3V3"), (GREY, "GND → GND (у 5V)"), (BLUE, "SDA → IO13"), (YEL, "SCL → U0T (GPIO1)"),
-             (GRN, "кнопка → IO12 и GND"), (VIO, "кнопка 2 → U0R (без MB)")]
+    # ---- легенда: правее всех вертикальных проводов (самый правый длинный у GND экрана)
+    lx, ly = 990, 470
+    items = [(RED, "VCC → 3V3"), (GREY, "GND → GND у 5V"), (BLUE, "SDA → IO13"), (YEL, "SCL → U0T"),
+             (GRN, "кнопка → IO12, GND"), (GRN, "TTP223: I/O → IO12"), (GRN, "TTP223: VCC → 3V3"),
+             (VIO, "кнопка 2 → U0R")]
     for i, (c, s) in enumerate(items):
-        yy = ly + i * 28
-        o.append(f'<rect x="{lx}" y="{yy - 9}" width="26" height="8" rx="4" fill="{c}"/>')
-        o.append(text(lx + 36, yy, s, 14, TXT))
+        yy = ly + i * 27
+        o.append(f'<rect x="{lx}" y="{yy - 9}" width="22" height="8" rx="4" fill="{c}"/>')
+        o.append(text(lx + 30, yy, s, 13, TXT))
     o.append(text(600, 846, "microSD в слоте на ESP32-CAM · питание от повербанка в micro-USB платы MB", 14, DIM, "middle"))
     o.append("</svg>")
     OUT.parent.mkdir(exist_ok=True)

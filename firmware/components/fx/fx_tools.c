@@ -212,18 +212,16 @@ void fx_ca_channel(fx_rgb_t *im, int ch, float s, uint8_t *plane) {
     for (int i = 0; i < w * h; i++) plane[i] = im->p[(size_t)i * 3 + ch];
     const float cx = (float)w * 0.5f, cy = (float)h * 0.5f, inv = 1.0f / s;
     for (int y = 0; y < h; y++) {
-        const float sy = cy + ((float)y - cy) * inv;
+        const float sy = fminf(fmaxf(cy + ((float)y - cy) * inv, 0.0f), (float)h - 1.001f);
         int y0 = (int)sy;
         const int wy = (int)((sy - (float)y0) * 256.0f);
-        if (y0 < 0) y0 = 0;
         if (y0 > h - 2) y0 = h - 2;
         uint8_t *d = im->p + (size_t)y * w * 3 + ch;
         const uint8_t *r0 = plane + (size_t)y0 * w, *r1 = r0 + w;
         for (int x = 0; x < w; x++, d += 3) {
-            const float sx = cx + ((float)x - cx) * inv;
+            const float sx = fminf(fmaxf(cx + ((float)x - cx) * inv, 0.0f), (float)w - 1.001f);
             int x0 = (int)sx;
             const int wx = (int)((sx - (float)x0) * 256.0f);
-            if (x0 < 0) x0 = 0;
             if (x0 > w - 2) x0 = w - 2;
             const int t = r0[x0] * (256 - wx) + r0[x0 + 1] * wx;
             const int b = r1[x0] * (256 - wx) + r1[x0 + 1] * wx;

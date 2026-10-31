@@ -86,14 +86,15 @@ void ui_live(const uint8_t *mask, const ui_hud_t *h) {
         ui_rect(x - 4, y - 4, w + 8, 21 + 8, 1);
         ui_text(x, y, 3, n, 0);
     }
-    // Внизу: выбранный вариант или подсказка стиля (вариант случайный)
+    // Внизу: выбранный вариант или подсказка стиля (вариант случайный).
+    // Пока открыто окно выбора, перед вариантом стоит TAP: касание его меняет.
     const fx_info_t *inf = fx_info(h->style);
-    char vb[16];
-    if (h->variant >= 0 && h->variant < inf->nvar)
-        snprintf(vb, sizeof(vb), "%s", inf->var[h->variant]);
-    else
-        snprintf(vb, sizeof(vb), "%s", inf->nvar > 1 ? "RANDOM" : inf->hint);
+    const char *vn = (h->variant >= 0 && h->variant < inf->nvar) ? inf->var[h->variant]
+                                                                 : (inf->nvar > 1 ? "RANDOM" : inf->hint);
+    char vb[24];
+    snprintf(vb, sizeof(vb), h->var_window ? "TAP:%s" : "\x01%s", vn);
     ui_text(1, 119, 1, vb, 1);
+    if (h->var_window) ui_rect(1, 127, h->var_window * 60 / 100, 1, 1);  // сколько осталось
     style_dots(h->style, 113);
     char b[16];
     snprintf(b, sizeof(b), "%2dF", h->fps > 99 ? 99 : h->fps);

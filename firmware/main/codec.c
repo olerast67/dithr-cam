@@ -243,15 +243,16 @@ esp_err_t dec_rgb_glitch(const uint8_t *jpg, size_t len, fx_rgb_t *img, uint32_t
     return ESP_OK;
 }
 
-esp_err_t enc_jpeg(const fx_rgb_t *img, int quality, uint8_t *out, size_t cap, size_t *out_len) {
+static esp_err_t enc_try(const fx_rgb_t *img, int quality, bool dual, uint8_t *out, size_t cap, size_t *out_len) {
     jpeg_enc_config_t cfg = DEFAULT_JPEG_ENC_CONFIG();
     cfg.width = img->w;
     cfg.height = img->h;
     cfg.src_type = JPEG_PIXEL_FORMAT_RGB888;
     cfg.subsampling = JPEG_SUBSAMPLE_444;
     cfg.quality = quality;
-    // Часть работы (кодирование Хаффмана) уходит в задачу на ядре 0.
-    cfg.task_enable = true;
+    // dual: кодирование Хаффмана уходит в задачу на ядре 0. Быстрее, но буферы
+    // этой задачи растут с шириной кадра и берутся из внутренней памяти.
+    cfg.task_enable = dual;
     cfg.hfm_task_priority = 6;
     cfg.hfm_task_core = 0;
     jpeg_enc_handle_t enc = NULL;
@@ -259,10 +260,16 @@ esp_err_t enc_jpeg(const fx_rgb_t *img, int quality, uint8_t *out, size_t cap, s
     int n = 0;
     const jpeg_error_t e = jpeg_enc_process(enc, img->p, img->w * img->h * 3, out, (int)cap, &n);
     jpeg_enc_close(enc);
-    if (e != JPEG_ERR_OK) {
-        ESP_LOGE(TAG, "encode error %d", (int)e);
+    if (e != JPEG_ERR_OK || n <= 0) {
+        ESP_LOGE(TAG, "encode error %d (dual %d)", (int)e, (int)dual);
         return ESP_FAIL;
     }
     *out_len = (size_t)n;
     return ESP_OK;
+}
+
+esp_err_t enc_jpeg(const fx_rgb_t *img, int quality, uint8_t *out, size_t cap, size_t *out_len) {
+    // Если на две задачи не хватило памяти, одна задача обходится 10 КБ.
+    if (enc_try(img, quality, true, out, cap, out_len) == ESP_OK) return ESP_OK;
+    return enc_try(img, quality, false, out, cap, out_len);
 }

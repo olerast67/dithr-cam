@@ -22,6 +22,7 @@ typedef struct {
     bool sd_ok;
     int fps;
     int banner_left;  // > 0: крупное имя стиля поверх кадра, ещё N кадров
+    int var_window;   // > 0: открыто окно выбора варианта, осталось столько процентов
 } ui_hud_t;
 
 void ui_boot(void);

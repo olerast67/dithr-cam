@@ -70,6 +70,7 @@ typedef struct fx_job {
     uint8_t pal[16][3];
     int pal_n;
     int bpp;               // 1, 2, 4 или 8 бит на пиксель в PNG
+    bool failed;           // эффект не досчитался (не хватило памяти): результат сохранять нельзя
     // Необязательный отчёт о ходе работы, 0..100.
     void (*progress)(int pct, void *user);
     void *user;

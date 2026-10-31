@@ -86,6 +86,7 @@ void fx_render(fx_style_t s, fx_job_t *j) {
     j->bpp = 0;
     j->out_w = j->img.w;
     j->out_h = j->img.h;
+    j->failed = false;
     if (j->seed == 0) j->seed = 0x9E3779B9u;
     if (j->variant < 0 || j->variant >= fx_info(s)->nvar) j->variant = fx_pick_variant(s, -1, j->seed);
     switch (s) {

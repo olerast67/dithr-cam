@@ -65,17 +65,21 @@
 <path d="M390,326 L678,326 Q700,326 700,348 L700,373 Q700,395 722,395 L1008,395 Q1030,395 1030,373 L1030,350" fill="none" stroke="#05060a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M390,326 L678,326 Q700,326 700,348 L700,373 Q700,395 722,395 L1008,395 Q1030,395 1030,373 L1030,350" fill="none" stroke="#ff5a5f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M390,566 L618,566 Q640,566 640,544 L640,442 Q640,420 662,420 L868,420 Q890,420 890,398 L890,350" fill="none" stroke="#05060a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M390,566 L618,566 Q640,566 640,544 L640,442 Q640,420 662,420 L868,420 Q890,420 890,398 L890,350" fill="none" stroke="#ffd23f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M390,526 L478,526 Q500,526 500,548 L500,578 Q500,600 522,600 L672,600 Q694,600 694,578 L694,510" fill="none" stroke="#05060a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M390,526 L478,526 Q500,526 500,548 L500,578 Q500,600 522,600 L672,600 Q694,600 694,578 L694,510" fill="none" stroke="#b48cff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="10 9"/>
-<rect x="880" y="461" width="26" height="8" rx="4" fill="#ff5a5f"/>
-<text x="916" y="470" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#e8eaf2" text-anchor="start" font-weight="400">VCC → 3V3</text>
-<rect x="880" y="489" width="26" height="8" rx="4" fill="#c3c7d6"/>
-<text x="916" y="498" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#e8eaf2" text-anchor="start" font-weight="400">GND → GND (у 5V)</text>
-<rect x="880" y="517" width="26" height="8" rx="4" fill="#4ea8ff"/>
-<text x="916" y="526" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#e8eaf2" text-anchor="start" font-weight="400">SDA → IO13</text>
-<rect x="880" y="545" width="26" height="8" rx="4" fill="#ffd23f"/>
-<text x="916" y="554" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#e8eaf2" text-anchor="start" font-weight="400">SCL → U0T (GPIO1)</text>
-<rect x="880" y="573" width="26" height="8" rx="4" fill="#3ee08a"/>
-<text x="916" y="582" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#e8eaf2" text-anchor="start" font-weight="400">кнопка → IO12 и GND</text>
-<rect x="880" y="601" width="26" height="8" rx="4" fill="#b48cff"/>
-<text x="916" y="610" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#e8eaf2" text-anchor="start" font-weight="400">кнопка 2 → U0R (без MB)</text>
+<rect x="990" y="461" width="22" height="8" rx="4" fill="#ff5a5f"/>
+<text x="1020" y="470" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13" fill="#e8eaf2" text-anchor="start" font-weight="400">VCC → 3V3</text>
+<rect x="990" y="488" width="22" height="8" rx="4" fill="#c3c7d6"/>
+<text x="1020" y="497" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13" fill="#e8eaf2" text-anchor="start" font-weight="400">GND → GND у 5V</text>
+<rect x="990" y="515" width="22" height="8" rx="4" fill="#4ea8ff"/>
+<text x="1020" y="524" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13" fill="#e8eaf2" text-anchor="start" font-weight="400">SDA → IO13</text>
+<rect x="990" y="542" width="22" height="8" rx="4" fill="#ffd23f"/>
+<text x="1020" y="551" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13" fill="#e8eaf2" text-anchor="start" font-weight="400">SCL → U0T</text>
+<rect x="990" y="569" width="22" height="8" rx="4" fill="#3ee08a"/>
+<text x="1020" y="578" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13" fill="#e8eaf2" text-anchor="start" font-weight="400">кнопка → IO12, GND</text>
+<rect x="990" y="596" width="22" height="8" rx="4" fill="#3ee08a"/>
+<text x="1020" y="605" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13" fill="#e8eaf2" text-anchor="start" font-weight="400">TTP223: I/O → IO12</text>
+<rect x="990" y="623" width="22" height="8" rx="4" fill="#3ee08a"/>
+<text x="1020" y="632" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13" fill="#e8eaf2" text-anchor="start" font-weight="400">TTP223: VCC → 3V3</text>
+<rect x="990" y="650" width="22" height="8" rx="4" fill="#b48cff"/>
+<text x="1020" y="659" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="13" fill="#e8eaf2" text-anchor="start" font-weight="400">кнопка 2 → U0R</text>
 <text x="600" y="846" font-family="ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#8a8fa6" text-anchor="middle" font-weight="400">microSD в слоте на ESP32-CAM · питание от повербанка в micro-USB платы MB</text>
 </svg>

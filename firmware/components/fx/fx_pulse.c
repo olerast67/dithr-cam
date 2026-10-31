@@ -51,7 +51,10 @@ void fx_pulse_render(fx_job_t *j) {
     const int t = 2;
     const int margin = w / 16;
     int *ys = malloc(sizeof(int) * (size_t)w);
-    if (!ys) return;
+    if (!ys) {
+        j->failed = true;
+        return;
+    }
     const uint8_t *fill = Lk->bg;
     for (int y0 = A + S; y0 < h - S; y0 += S) {
         // профиль строки: высота по яркости, у краёв гаснет (как на обложке)

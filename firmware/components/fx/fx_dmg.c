@@ -80,7 +80,10 @@ void fx_dmg_render(fx_job_t *j) {
     fx_rand(&rng);
     const int v = j->variant % 4;
     uint8_t *small = malloc(SW * SH), *blur = malloc(SW * SH), *g = malloc(GW * GH);
-    if (!small || !blur || !g) goto out;
+    if (!small || !blur || !g) {
+        j->failed = true;
+        goto out;
+    }
 
     // 1. Вырезаем 8:7 по центру и усредняем блоками до 128x112
     const int cw = FX_MIN(w, h * 8 / 7), ch = cw * 7 / 8;

@@ -245,7 +245,10 @@ void fx_y2k_render(fx_job_t *j) {
 
     // 2. Тон: подъём, карта градиента
     y2k_ctx_t *k = malloc(sizeof(y2k_ctx_t));
-    if (!k) return;
+    if (!k) {
+        j->failed = true;
+        return;
+    }
     k->j = j;
     k->L = A;
     const float gam = 1.5f + (float)(fx_rand(&rng) % 60) / 100.0f;

@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
+#include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -82,6 +83,23 @@ esp_err_t store_init(void) {
     }
     sdmmc_card_print_info(stdout, s_card);
     mkdir(STORE_DIR, 0777);
+    // Номер в NVS мог сброситься (стирание flash, новая версия NVS). Чтобы не
+    // затереть старые снимки, продолжаем после самого большого номера на карте.
+    DIR *d = opendir(STORE_DIR);
+    if (d) {
+        struct dirent *e;
+        uint32_t top = 0;
+        while ((e = readdir(d)) != NULL) {
+            const char *n = e->d_name;
+            if (n[0] >= '0' && n[0] <= '9' && n[1] >= '0' && n[1] <= '9' && n[2] >= '0' && n[2] <= '9' &&
+                n[3] >= '0' && n[3] <= '9' && n[4] == '_') {
+                const uint32_t v = (uint32_t)((n[0] - '0') * 1000 + (n[1] - '0') * 100 + (n[2] - '0') * 10 + (n[3] - '0'));
+                if (v > top) top = v;
+            }
+        }
+        closedir(d);
+        if (top + 1 > s_shot) s_shot = top + 1;
+    }
     s_ok = s_bounce != NULL;
     return s_ok ? ESP_OK : ESP_ERR_NO_MEM;
 }
@@ -157,7 +175,9 @@ static esp_err_t open_wr(wr_t *w, uint32_t shot, const char *tag, const char *ex
 
 static esp_err_t close_wr(wr_t *w) {
     wr_flush(w);
-    close(w->fd);
+    // FAT дописывает последний сектор и запись каталога только в close():
+    // если карта отвалилась здесь, файл обрезан, и это ошибка.
+    if (close(w->fd) != 0 && !w->err) w->err = errno ? errno : EIO;
     return w->err ? ESP_FAIL : ESP_OK;
 }
 
@@ -174,6 +194,6 @@ esp_err_t store_save_png(uint32_t shot, const char *tag, const uint8_t *idx, int
     if (!s_ok) return ESP_ERR_INVALID_STATE;
     wr_t wr;
     if (open_wr(&wr, shot, tag, "png") != ESP_OK) return ESP_FAIL;
-    fx_png_write_indexed(wr_put, &wr, idx, w, h, bpp, pal, pal_n);
+    if (fx_png_write_indexed(wr_put, &wr, idx, w, h, bpp, pal, pal_n) != 0 && !wr.err) wr.err = EIO;
     return close_wr(&wr);
 }

@@ -218,7 +218,10 @@ void fx_shard_render(fx_job_t *j) {
     fx_progress(j, 90);
     if (v != V_MOSAIC) fx_bloom(im, 200, 500, FX_MAX(2, w / 260), j->scratch);
     fx_grain(im, j->seed, 4, 60);
+    goto done;
 out:
+    j->failed = true;
+done:
     free(k.c);
     free(k.bstart);
     free(k.blist);
