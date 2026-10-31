@@ -7,8 +7,19 @@
 
 #define STORE_DIR "/sdcard/DITHR"
 
+typedef enum {
+    STORE_OK,
+    STORE_NO_CARD,
+    STORE_NOT_FAT,    // карта есть, но не FAT32 (обычно exFAT): можно отформатировать
+    STORE_READ_ONLY,  // карта не сохраняет записанное, нужна другая
+    STORE_NO_MEM,
+} store_state_t;
+
 esp_err_t store_init(void);
 bool store_ok(void);
+store_state_t store_state(void);
+esp_err_t store_format(void);  // только из STORE_NOT_FAT: размечает карту в FAT32, всё стирает
+const char *store_last_error(void);  // коротко для экрана: OPEN E5, WRITE E28...
 uint32_t store_next_shot(void);  // ищет свободный номер на карте (медленно, только для снимка)
 uint32_t store_peek_shot(void);  // номер без обращения к карте, для HUD
 void store_commit_shot(uint32_t shot);

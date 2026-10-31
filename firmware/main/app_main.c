@@ -14,6 +14,7 @@
 #include "board.h"
 #include "cam.h"
 #include "codec.h"
+#include "diag.h"
 #include "driver/gpio.h"
 #include "esp_attr.h"
 #include "esp_heap_caps.h"
@@ -88,9 +89,55 @@ static void result_mask(const uint8_t *idx, const uint8_t (*pal)[3], int w, int 
     s_prev.t = t;
 }
 
+static void sd_problem(void) {
+    switch (store_state()) {
+        case STORE_NOT_FAT: ui_message("NOT FAT32", "RESET TO FORMAT"); break;
+        case STORE_READ_ONLY: ui_message("READ ONLY", "SD CARD: REPLACE IT"); break;
+        case STORE_NO_MEM: ui_message("SD ERROR", "NO MEMORY"); break;
+        default: ui_message("NO SD", "INSERT CARD + RESET"); break;
+    }
+}
+
+// Ждёт событие кнопки не дольше ms.
+static input_ev_t wait_input(int ms) {
+    for (int t = 0; t < ms; t += 20) {
+        const input_ev_t ev = input_get();
+        if (ev != EV_NONE) return ev;
+        vTaskDelay(pdMS_TO_TICKS(20));
+    }
+    return EV_NONE;
+}
+
+// Карта не в FAT32 (чаще всего exFAT на 64 ГБ+). Windows не форматирует в FAT32
+// карты больше 32 ГБ, поэтому формат делает сама камера, после двух удержаний.
+static void offer_format(void) {
+    input_flush();
+    ui_message("NOT FAT32", "HOLD = FORMAT CARD");
+    input_ev_t ev = wait_input(8000);
+    ESP_LOGI(TAG, "format offer: event %d", ev);
+    if (ev != EV_NEXT) return;
+    input_flush();
+    ui_message("ERASE ALL?", "HOLD AGAIN = YES");
+    // Удержание повторяет событие: ждём, пока кнопку отпустят, иначе одно
+    // долгое нажатие само подтвердило бы стирание.
+    while (wait_input(900) != EV_NONE) {
+    }
+    ev = wait_input(5000);
+    ESP_LOGI(TAG, "format confirm: event %d", ev);
+    if (ev != EV_NEXT) return;
+    ui_message("FORMAT...", "DO NOT POWER OFF");
+    const esp_err_t err = store_format();
+    char why[32];
+    snprintf(why, sizeof(why), "FORMAT %s", esp_err_to_name(err));
+    diag_save(why);  // журнал формата напечатается в порт при следующем запуске
+    ui_message(err == ESP_OK ? "SD READY" : "FMT FAIL", err == ESP_OK ? "FAT32" : esp_err_to_name(err));
+    vTaskDelay(pdMS_TO_TICKS(1500));
+    input_flush();
+}
+
 static void capture(void) {
     if (!store_ok()) {
-        ui_message("NO SD", "INSERT CARD + RESET");
+        sd_problem();
         vTaskDelay(pdMS_TO_TICKS(1200));
         return;
     }
@@ -111,6 +158,7 @@ static void capture(void) {
     dcam_mode_capture(!tide);
     bool ok = true;
     bool saved = true;  // все файлы снимка записались на карту
+    char why[32] = "";  // первая причина неудачи: на экран и в журнал
     for (int k = 0; k < inf->frames && ok; k++) {
         camera_fb_t *fb = dcam_get(cw, chh, 8);
         if (!fb) {
@@ -119,7 +167,10 @@ static void capture(void) {
         }
         if (k == 0) {
             ui_progress(s_cap_style, 2, "SAVE RAW");
-            saved &= store_save(shot, "raw", "jpg", fb->buf, fb->len) == ESP_OK;
+            if (store_save(shot, "raw", "jpg", fb->buf, fb->len) != ESP_OK) {
+                saved = false;
+                snprintf(why, sizeof(why), "RAW %s", store_last_error());
+            }
         }
         if (inf->out != FX_OUT_NONE) {
             esp_err_t e;
@@ -176,19 +227,26 @@ static void capture(void) {
         const int64_t t2 = esp_timer_get_time();
         if (job.failed) {
             saved = false;  // исходник уже на карте, а полуготовый кадр не пишем
+            if (!why[0]) snprintf(why, sizeof(why), "FX NO MEMORY");
         } else if (job.idx) {
             ui_progress(s_cap_style, 100, "WRITE PNG");
-            saved &= store_save_png(shot, tag, job.idx, job.out_w, job.out_h, job.bpp, (const uint8_t(*)[3])job.pal,
-                                    job.pal_n) == ESP_OK;
+            if (store_save_png(shot, tag, job.idx, job.out_w, job.out_h, job.bpp, (const uint8_t(*)[3])job.pal,
+                               job.pal_n) != ESP_OK) {
+                saved = false;
+                if (!why[0]) snprintf(why, sizeof(why), "PNG %s", store_last_error());
+            }
             result_mask(job.idx, (const uint8_t(*)[3])job.pal, job.out_w, job.out_h);
         } else {
             ui_progress(s_cap_style, 100, "ENCODE JPEG");
             size_t len = 0;
             // scratch после эффекта свободен: туда кладём готовый JPEG
-            if (enc_jpeg(&s_img, 92, s_scratch, s_scratch_size, &len) == ESP_OK)
-                saved &= store_save(shot, tag, "jpg", s_scratch, len) == ESP_OK;
-            else
+            if (enc_jpeg(&s_img, 92, s_scratch, s_scratch_size, &len) != ESP_OK) {
                 saved = false;
+                if (!why[0]) snprintf(why, sizeof(why), "JPEG ENCODE");
+            } else if (store_save(shot, tag, "jpg", s_scratch, len) != ESP_OK) {
+                saved = false;
+                if (!why[0]) snprintf(why, sizeof(why), "JPG %s", store_last_error());
+            }
             result_mask(NULL, NULL, s_img.w, s_img.h);
         }
         if (job.failed) result_mask(NULL, NULL, s_img.w, s_img.h);
@@ -202,7 +260,9 @@ static void capture(void) {
     } else {
         // карта выпала или переполнилась, файл не закодировался или эффекту не
         // хватило памяти: показываем это вместо «SAVED»
-        ui_message("SAVE ERROR", "CHECK SD CARD");
+        ESP_LOGE(TAG, "save error: %s", why);
+        diag_save(why);  // журнал до ошибки напечатается в порт при следующем запуске
+        ui_message("SAVE ERROR", why);
     }
     vTaskDelay(pdMS_TO_TICKS(1600));
 }
@@ -316,7 +376,9 @@ void app_main(void) {
     leds_init();
     // Карта и камера запускаются раньше экрана: их ошибки ещё видны в логе
     // UART, а после запуска экрана GPIO1 становится линией SCL.
+    diag_init();
     store_init();
+    diag_print_last();
     const esp_err_t cam_err = dcam_init();
 
     s_img.w = OUT_W;
@@ -352,9 +414,10 @@ void app_main(void) {
         ui_message(cam_err != ESP_OK ? "NO CAM" : "NO PSRAM", "CHECK RIBBON / BOARD");
         return;
     }
+    if (store_state() == STORE_NOT_FAT) offer_format();
     if (!store_ok()) {
-        ui_message("NO SD", "PREVIEW ONLY");
-        vTaskDelay(pdMS_TO_TICKS(1200));
+        sd_problem();
+        vTaskDelay(pdMS_TO_TICKS(1500));
     }
     // Стек с запасом: в глубине снимка работают JPEGDEC и кодировщик JPEG.
     xTaskCreatePinnedToCore(camera_loop, "cam_loop", 12288, NULL, 5, NULL, 1);

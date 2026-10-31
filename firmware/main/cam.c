@@ -17,7 +17,7 @@ static const char *TAG = "cam";
 #endif
 
 #define Q_PREVIEW 12  // меньше число = лучше качество и больше файл
-#define Q_CAPTURE 10
+#define Q_CAPTURE 12
 
 esp_err_t dcam_init(void) {
     camera_config_t c = {
@@ -41,7 +41,11 @@ esp_err_t dcam_init(void) {
         .ledc_timer = LEDC_TIMER_0,
         .ledc_channel = LEDC_CHANNEL_0,
         .pixel_format = PIXFORMAT_JPEG,
-        .frame_size = FRAMESIZE_UXGA,
+        // Старт сразу в малом режиме: датчик включается с меньшим током, чем в
+        // 1600x1200 (на слабом USB при включении камеры срабатывала защита от
+        // просадки питания). Буферы всё равно размером jpeg_buffer_size, поэтому
+        // переключение на 1600x1200 для снимка работает.
+        .frame_size = FRAMESIZE_QVGA,
         .jpeg_quality = Q_CAPTURE,
         .fb_count = 2,
         .fb_location = CAMERA_FB_IN_PSRAM,
@@ -72,6 +76,9 @@ esp_err_t dcam_init(void) {
     // яркость чуть выше, насыщенность ниже (как в примере Espressif CameraWebServer).
     const bool ov3660 = s->id.PID == OV3660_PID;
     if (ov3660) {
+        // На 20 МГц OV3660 гонит JPEG быстрее, чем ESP32 успевает забирать по DMA:
+        // байты теряются, и в кадре появляются однотонные блоки и сдвиг цвета.
+        s->set_xclk(s, LEDC_TIMER_0, 10);
         s->set_brightness(s, 1);
         s->set_saturation(s, -2);
     }

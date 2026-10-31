@@ -36,6 +36,9 @@ CONFIG_ESP_TASK_WDT_TIMEOUT_S=20
 CONFIG_FATFS_LFN_HEAP=y
 CONFIG_FATFS_MAX_LFN=64
 CONFIG_FATFS_VFS_FSTAT_BLKSIZE=4096
+# Буферы FatFs во внутренней памяти: из PSRAM запись на карту в 1-битном
+# режиме падала с EIO.
+CONFIG_FATFS_ALLOC_PREFER_EXTRAM=n
 
 # Лог по UART идёт до запуска экрана: потом GPIO1 становится линией SCL.
 CONFIG_LOG_DEFAULT_LEVEL_INFO=y
