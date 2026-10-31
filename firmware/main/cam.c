@@ -67,7 +67,16 @@ esp_err_t dcam_init(void) {
     s->set_exposure_ctrl(s, 1);
     s->set_gain_ctrl(s, 1);
     s->set_gainceiling(s, GAINCEILING_4X);  // меньше шума в темноте
-    s->set_vflip(s, CAM_VFLIP);
+    // На части плат вместо OV2640 стоит OV3660 (3 Мп). Он отдаёт кадр вверх
+    // ногами и пересвечивает цвет, поэтому для него переворот включён наоборот,
+    // яркость чуть выше, насыщенность ниже (как в примере Espressif CameraWebServer).
+    const bool ov3660 = s->id.PID == OV3660_PID;
+    if (ov3660) {
+        s->set_brightness(s, 1);
+        s->set_saturation(s, -2);
+    }
+    ESP_LOGI(TAG, "sensor PID 0x%04x%s", s->id.PID, ov3660 ? " (OV3660)" : "");
+    s->set_vflip(s, ov3660 ? !CAM_VFLIP : CAM_VFLIP);
     s->set_hmirror(s, CAM_HMIRROR);
     dcam_mode_preview();
     return ESP_OK;
